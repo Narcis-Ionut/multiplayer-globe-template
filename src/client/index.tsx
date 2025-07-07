@@ -94,7 +94,6 @@ function App() {
         ) : (
           <>
             <b>{counter}</b> {counter === 1 ? "persoană" : "oameni"} aici acum
-            {lastPlace && <> — ultimul: <b>{lastPlace}</b></>}
           </>
         )}
       </p>
@@ -103,6 +102,8 @@ function App() {
         ref={canvasRef}
         style={{ width: 400, height: 400, maxWidth: "100%", aspectRatio: 1 }}
       />
+
+      <p>{lastPlace && <> — ultimul: <b>{lastPlace}</b></>}</p>
     </div>
   );
 }
