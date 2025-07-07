@@ -90,10 +90,10 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Where's everyone at?</h1>
+      <h1>Unde sunt alti acum ?</h1>
       {counter !== 0 ? (
         <p>
-          <b>{counter}</b> {counter === 1 ? "person" : "people"} connected.
+          <b>{counter}</b> {counter === 1 ? "persoana" : "oameni"} connectati acum.
         </p>
       ) : (
         <p>&nbsp;</p>
