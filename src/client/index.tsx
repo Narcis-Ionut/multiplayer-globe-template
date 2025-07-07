@@ -5,57 +5,55 @@ import { createRoot } from "react-dom/client";
 import createGlobe from "cobe";
 import usePartySocket from "partysocket/react";
 
-// The type of messages we'll be receiving from the server
-import type { OutgoingMessage } from "../shared";
-import type { LegacyRef } from "react";
+import type { OutgoingMessage, Position } from "../../shared"; // ← IMPORTANT
+
+/** Extind Position cu câmpurile necesare COBE */
+type Marker = Position & {
+  location: [number, number]; // (lat,lng) pentru cobe
+  size: number;               // dimensiunea bulinei
+};
 
 function App() {
-  // A reference to the canvas element where we'll render the globe
-  const canvasRef = useRef<HTMLCanvasElement>();
-  // The number of markers we're currently displaying
+  // ───────── state local ─────────
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [counter, setCounter] = useState(0);
-  // A map of marker IDs to their positions
-  // Note that we use a ref because the globe's `onRender` callback
-  // is called on every animation frame, and we don't want to re-render
-  // the component on every frame.
-  const positions = useRef<
-    Map<
-      string,
-      {
-        location: [number, number];
-        size: number;
-      }
-    >
-  >(new Map());
-  // Connect to the PartyServer server
+  const [lastPlace, setLastPlace] = useState<string | null>(null);
+
+  /** Mapăm id-ul conexiunii → marker */
+  const positions = useRef<Map<string, Marker>>(new Map());
+
+  // ───────── websocket (PartySocket) ─────────
   const socket = usePartySocket({
     room: "default",
     party: "globe",
     onMessage(evt) {
-      const message = JSON.parse(evt.data as string) as OutgoingMessage;
+      const message = JSON.parse(evt.data) as OutgoingMessage;
+
       if (message.type === "add-marker") {
-        // Add the marker to our map
-        positions.current.set(message.position.id, {
-          location: [message.position.lat, message.position.lng],
-          size: message.position.id === socket.id ? 0.1 : 0.05,
-        });
-        // Update the counter
+        const pos = message.position;
+        const marker: Marker = {
+          ...pos,
+          location: [pos.lat, pos.lng],
+          size: pos.id === socket.id ? 0.1 : 0.05,
+        };
+
+        positions.current.set(marker.id, marker);
         setCounter((c) => c + 1);
+        setLastPlace(
+          `${marker.flag ?? ""} ${marker.city ?? marker.country ?? "loc necunoscut"}`
+        );
       } else {
-        // Remove the marker from our map
         positions.current.delete(message.id);
-        // Update the counter
         setCounter((c) => c - 1);
       }
     },
   });
 
+  // ───────── init COBE globe ─────────
   useEffect(() => {
-    // The angle of rotation of the globe
-    // We'll update this on every frame to make the globe spin
     let phi = 0;
 
-    const globe = createGlobe(canvasRef.current as HTMLCanvasElement, {
+    const globe = createGlobe(canvasRef.current!, {
       devicePixelRatio: 2,
       width: 400 * 2,
       height: 400 * 2,
@@ -68,45 +66,45 @@ function App() {
       baseColor: [0.3, 0.3, 0.3],
       markerColor: [0.8, 0.1, 0.1],
       glowColor: [0.2, 0.2, 0.2],
-      markers: [],
       opacity: 0.7,
+      markers: [],
       onRender: (state) => {
-        // Called on every animation frame.
-        // `state` will be an empty object, return updated params.
+        // COBE vrea doar {location,size}
+        state.markers = [...positions.current.values()].map((m) => ({
+          location: m.location,
+          size: m.size,
+        }));
 
-        // Get the current positions from our map
-        state.markers = [...positions.current.values()];
-
-        // Rotate the globe
         state.phi = phi;
         phi += 0.01;
       },
     });
 
-    return () => {
-      globe.destroy();
-    };
+    return () => globe.destroy();
   }, []);
 
+  // ───────── UI ─────────
   return (
     <div className="App">
-      <h1>Unde sunt alti acum ?</h1>
-      {counter !== 0 ? (
-        <p>
-          <b>{counter}</b> {counter === 1 ? "persoana" : "oameni"} aici acum.
-        </p>
-      ) : (
-        <p>&nbsp;</p>
-      )}
+      <h1>Unde sunt alții acum?</h1>
 
-      {/* The canvas where we'll render the globe */}
+      <p>
+        {counter === 0 ? (
+          "Nimeni conectat."
+        ) : (
+          <>
+            <b>{counter}</b> {counter === 1 ? "persoană" : "oameni"} aici acum
+            {lastPlace && <> — ultimul: <b>{lastPlace}</b></>}
+          </>
+        )}
+      </p>
+
       <canvas
-        ref={canvasRef as LegacyRef<HTMLCanvasElement>}
+        ref={canvasRef}
         style={{ width: 400, height: 400, maxWidth: "100%", aspectRatio: 1 }}
       />
     </div>
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 createRoot(document.getElementById("root")!).render(<App />);
