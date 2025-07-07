@@ -55,6 +55,12 @@ a {
   Clean typography, contemporary color palette, and smooth interactions
 */
 
+/* 
+  Modern 2025 CSS Boilerplate
+  Designed to work seamlessly with normalize.css
+  Clean typography, contemporary color palette, and smooth interactions
+*/
+
 :root {
   /* Color System */
   --primary: #6366f1;
@@ -153,7 +159,7 @@ a {
   --border-color: var(--gray-200);
 }
 
-/* Reset and Base Styles */
+/* Enhanced Base Styles (builds on normalize.css) */
 *,
 *::before,
 *::after {
@@ -162,9 +168,7 @@ a {
 
 html {
   scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  /* normalize.css already handles -webkit-text-size-adjust: 100% */
 }
 
 body {
@@ -173,27 +177,29 @@ body {
   line-height: 1.6;
   color: var(--text-primary);
   background-color: var(--bg-primary);
-  margin: 0;
+  /* normalize.css already handles margin: 0 */
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* Typography */
+/* Typography (extends normalize.css) */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
   font-weight: 700;
   line-height: 1.25;
-  margin: 0 0 var(--space-4) 0;
   color: var(--text-primary);
   letter-spacing: -0.025em;
+  /* normalize.css handles basic margin, we'll override for consistency */
+  margin: 0 0 var(--space-4) 0;
 }
 
 h1 {
   font-size: var(--text-4xl);
   font-weight: 800;
   margin-bottom: var(--space-6);
+  /* normalize.css sets font-size: 2em and margin: 0.67em 0 - we override */
 }
 
 h2 {
@@ -226,12 +232,13 @@ p {
   color: var(--text-secondary);
 }
 
-/* Links */
+/* Links (extends normalize.css) */
 a {
   color: var(--primary);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: all var(--transition-fast);
+  /* normalize.css handles background-color: transparent */
 }
 
 a:hover {
@@ -256,9 +263,10 @@ li {
   color: var(--text-secondary);
 }
 
-/* Code */
+/* Code (extends normalize.css) */
 code, pre {
   font-family: var(--font-mono);
+  /* normalize.css handles monospace, monospace inheritance */
   font-size: 0.9em;
 }
 
@@ -277,6 +285,7 @@ pre {
   overflow-x: auto;
   border: 1px solid var(--border-color);
   margin: var(--space-4) 0;
+  /* normalize.css handles font-family: monospace, monospace and font-size: 1em */
 }
 
 pre code {
@@ -286,8 +295,9 @@ pre code {
   border-radius: 0;
 }
 
-/* Form Elements */
+/* Form Elements (extends normalize.css) */
 input, textarea, select, button {
+  /* normalize.css handles font inheritance and margin: 0 */
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
