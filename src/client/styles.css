@@ -48,7 +48,19 @@ a {
   text-underline-offset: 3px;
   text-decoration-color: #555;
 }
-*/
+
+.visitor-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem auto 0;
+  max-width: 320px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+.visitor-list li {
+  padding: .2rem 0;
+  border-bottom: 1px solid #333;
+}
 
 /* 
   Modern 2025 CSS Boilerplate
