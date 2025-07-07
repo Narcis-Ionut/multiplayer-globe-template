@@ -93,7 +93,7 @@ function App() {
       <h1>Unde sunt alti acum ?</h1>
       {counter !== 0 ? (
         <p>
-          <b>{counter}</b> {counter === 1 ? "persoana" : "oameni"} connectati acum.
+          <b>{counter}</b> {counter === 1 ? "persoana" : "oameni"} aici acum.
         </p>
       ) : (
         <p>&nbsp;</p>
