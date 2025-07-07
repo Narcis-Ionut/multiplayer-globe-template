@@ -21,6 +21,7 @@ function App() {
 
   /** Mapăm id-ul conexiunii → marker */
   const positions = useRef<Map<string, Marker>>(new Map());
+  const [, forceRender] = useState({});   // mic hack ca să forţăm re-randare
 
   // ───────── websocket (PartySocket) ─────────
   const socket = usePartySocket({
@@ -42,9 +43,11 @@ function App() {
         setLastPlace(
           `${marker.flag ?? ""} ${marker.city ?? marker.country ?? "loc necunoscut"}`
         );
+        forceRender({});
       } else {
         positions.current.delete(message.id);
         setCounter((c) => c - 1);
+        forceRender({});
       }
     },
   });
@@ -103,7 +106,15 @@ function App() {
         style={{ width: 400, height: 400, maxWidth: "100%", aspectRatio: 1 }}
       />
 
-      <p>{lastPlace && <> — ultimul: <b>{lastPlace}</b></>}</p>
+      {counter > 0 && (
+  <ul className="visitor-list">
+    {[...positions.current.values()].map((v) => (
+      <li key={v.id}>
+        {v.flag ?? "🏳️"} {v.city ?? v.country ?? "loc necunoscut"}
+      </li>
+    ))}
+  </ul>
+)}
     </div>
   );
 }
