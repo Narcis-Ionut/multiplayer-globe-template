@@ -1,7 +1,7 @@
 // Messages that we'll send to the client
 
 // Representing a person's position
-export type Position = {
+/*export type Position = {
   lat: number;
   lng: number;
   id: string;
@@ -16,3 +16,19 @@ export type OutgoingMessage =
       type: "remove-marker";
       id: string;
     };
+*/
+
+// shared/index.ts
+export type Position = {
+  id: string;
+  lat: number;
+  lng: number;
+  city?: string;
+  region?: string;
+  country?: string;   // ISO-2, ex: "MD"
+  flag?: string;      // 🇲🇩  (calculat server-side)
+};
+
+export type OutgoingMessage =
+  | { type: "add-marker"; position: Position }
+  | { type: "remove-marker"; id: string };
